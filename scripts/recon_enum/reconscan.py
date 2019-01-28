@@ -127,27 +127,37 @@ def fingerEnum(ip_address, port):
    return
 
 def httpEnum(ip_address, port):
+    #webRecon is typical Nmap info
+    #dirbust only -i 2 is small wordlist, small extensions
+    #dirbust full -i 8 is big wordlist, big extensions, pass to all additional tools (cewl,parameth,whatweb,etc)
     path = "/root/scripts/recon_enum/results/exam/dirb/%s" % (port)
     mkdir_p(path)
-    print "INFO: Enumerating http on %s:%s" % (ip_address, port)
-    #print "INFO: Performing nmap web script scan for %s:%s" % (ip_address, port)
+    print "INFO: Performing webRecon script scan for %s:%s (step 1/3)" % (ip_address, port)
     subprocess.check_output(['./webrecon.py','-a',userAgent,'http://%s:%s' % (ip_address, port)])
-    #print "INFO: webRecon scan completed for %s:%s" % (ip_address, port)
-    #print "INFO: dirbust scan started on %s:%s" % (ip_address, port)
-    subprocess.check_output(['./dirbustEVERYTHING.py','-a',userAgent,'-p','1','-i','4','http://%s:%s' % (ip_address,port)])
-    #print "INFO: dirbust scan completed for %s:%s" % (ip_address, port)
+    print "INFO: webRecon scan completed for %s:%s (step 1/3)" % (ip_address, port)
+    print "INFO: dirbust only scan started on %s:%s (step 2/3)" % (ip_address, port)
+    subprocess.check_output(['./dirbustEVERYTHING.py','-a',userAgent,'-p','1','-i','2','http://%s:%s' % (ip_address,port)])
+    print "INFO: dirbust only scan completed for %s:%s (step 2/3)" % (ip_address, port)
+    print "INFO: dirbust full scan started on %s:%s (step 3/3)" % (ip_address, port)
+    subprocess.check_output(['./dirbustEVERYTHING.py','-a',userAgent,'-p','1','-i','8','http://%s:%s' % (ip_address,port)])
+    print "INFO: dirbust full scan completed for %s:%s (step 3/3)" % (ip_address, port)
     return
 
 def httpsEnum(ip_address, port):
+    #webRecon is typical Nmap info
+    #dirbust only -i 2 is small wordlist, small extensions
+    #dirbust full -i 8 is big wordlist, big extensions, pass to all additional tools (cewl,parameth,whatweb,etc)
     path = "/root/scripts/recon_enum/results/exam/dirb/%s" % (port)
     mkdir_p(path)
-    print "INFO: Enumerating https on %s:%s" % (ip_address, port)
-    #print "INFO: Performing nmap web script scan for %s:%s" % (ip_address, port)
+    print "INFO: Performing webRecon script scan for %s:%s (step 1/3)" % (ip_address, port)
     subprocess.check_output(['./webRecon.py','-a',userAgent,'https://%s:%s' % (ip_address, port)])
-    #print "INFO: webRecon scan completed for %s:%s" % (ip_address, port)
-    #print "INFO: dirbust scan started on %s:%s" % (ip_address, port)
-    subprocess.check_output(['./dirbustEVERYTHING.py','-a',userAgent,'-p','1','-i','4','https://%s:%s' % (ip_address,port)])
-    #print "INFO: dirbust scan completed for %s:%s" % (ip_address, port)
+    print "INFO: webRecon scan completed for %s:%s (step 1/3)" % (ip_address, port)
+    print "INFO: dirbust only scan started on %s:%s (step 2/3)" % (ip_address, port)
+    subprocess.check_output(['./dirbustEVERYTHING.py','-a',userAgent,'-p','1','-i','2','https://%s:%s' % (ip_address,port)])
+    print "INFO: dirbust only scan completed for %s:%s (step 2/3)" % (ip_address, port)
+    print "INFO: dirbust full scan started on %s:%s (step 3/3)" % (ip_address, port)
+    subprocess.check_output(['./dirbustEVERYTHING.py','-a',userAgent,'-p','1','-i','8','https://%s:%s' % (ip_address,port)])
+    print "INFO: dirbust full scan completed for %s:%s (step 3/3)" % (ip_address, port)
     return
 
 def mssqlEnum(ip_address, port):
@@ -356,8 +366,8 @@ def nmapFullFastScan(ip_address):
 
 def nmapVersionTCPAndPass(ip_address, port):
    #need this to version ports and in case there is no recon module we'll have a scan for it. Runs default scripts.
-   uniNmapTCP = "nmap -n -vv -Pn -A -sC -sT -T 4 -p %s -oA '/root/scripts/recon_enum/results/exam/nmap/%s_%s' %s"  % (port, ip_address, port, ip_address)
-   lines = subprocess.check_output(['nmap','-n','-vv','-Pn','-A','-sC','-sT','-T','4','-p',port,'-oA',"/root/scripts/recon_enum/results/exam/nmap/%s_%s" % (ip_address,port),ip_address]).split("\n")
+   uniNmapTCP = "nmap -n -vv -Pn -A -sC -sV -sT -T 4 -p %s -oA '/root/scripts/recon_enum/results/exam/nmap/%s_%s' %s"  % (port, ip_address, port, ip_address)
+   lines = subprocess.check_output(['nmap','-n','-vv','-Pn','-A','-sC','-sV','-sT','-T','4','-p',port,'-oA',"/root/scripts/recon_enum/results/exam/nmap/%s_%s" % (ip_address,port),ip_address]).split("\n")
    print "INFO: nmap version and pass for TCP %s:%s completed" % (ip_address, port)
    for line in lines:
       line = line.strip()
@@ -410,8 +420,8 @@ def nmapVersionTCPAndPass(ip_address, port):
             multProc(tftpEnum, ip_address, port)
 
 def nmapVersionUDPAndPass(ip_address, port):
-   uniNmapUDP = "nmap -n -vv -Pn -A -sC -sU -T 4 -p %s -oA '/root/scripts/recon_enum/results/exam/nmap/%s_%sU.nmap' %s"  % (port, ip_address, port, ip_address)
-   lines = subprocess.check_output(['nmap','-n','-vv','-Pn','-A','-sC','-sU','-T','4','-p',port,'-oA',"/root/scripts/recon_enum/results/exam/nmap/%s_%sU" % (ip_address,port),ip_address]).split("\n")
+   uniNmapUDP = "nmap -n -vv -Pn -A -sC -sV -sU -T 4 -p %s -oA '/root/scripts/recon_enum/results/exam/nmap/%s_%sU.nmap' %s"  % (port, ip_address, port, ip_address)
+   lines = subprocess.check_output(['nmap','-n','-vv','-Pn','-A','-sC','-sV','-sU','-T','4','-p',port,'-oA',"/root/scripts/recon_enum/results/exam/nmap/%s_%sU" % (ip_address,port),ip_address]).split("\n")
    print "INFO: nmap version and pass for UDP %s:%s completed" % (ip_address, port)
    for line in lines:
       line = line.strip()
@@ -426,6 +436,8 @@ def nmapVersionUDPAndPass(ip_address, port):
             multProc(dnsEnum, ip_address, port)
          elif ("snmp" in service):
             multProc(snmpEnum, ip_address, port)
+         elif ("tftp" in service):
+            multProc(tftpEnum, ip_address, port)
 
 #makedir function from https://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
 #Compatible with Python >2.5, but there is a more advanced function for python 3.5

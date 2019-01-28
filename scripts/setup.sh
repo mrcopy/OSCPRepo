@@ -5,7 +5,8 @@
 #
 
 echo "### Downloading things...### \n\n"
-echo "Install new software: atom crackmapexec exiftool gobuster git nbtscan-unixwiz nfs-common flameshot libldap2-dev libsasl2-dev powershell-preview python-argcomplete"
+#Packages for crackmapexec: libssl-dev libffi-dev python-dev build-essential
+echo "Install new software: atom build-essential bloodhound crackmapexec exiftool gobuster git nbtscan-unixwiz nfs-common flameshot libffi-dev libldap2-dev libsasl2-dev libssl-dev powershell-preview python-argcomplete python-dev"
 curl -L https://packagecloud.io/AtomEditor/atom/gpgkey | sudo apt-key add -
 sudo sh -c 'echo "deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main" > /etc/apt/sources.list.d/atom.list'
 sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/microsoft.list'
@@ -16,6 +17,10 @@ apt-get install -y atom crackmapexec exiftool gobuster git nbtscan-unixwiz nfs-c
 echo "\nCloning ADLdapEnum\n"
 direc=/root/Documents/ADLdapEnum
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/CroweCybersecurity/ad-ldap-enum.git $direc; fi
+
+echo "\nCloning CrackMapExec (master branch (v4 +))\n"
+direc=/root/Documents/CrackMapExec
+if [ -d "$direc" ]; then cd $direc && git pull; else git clone --recursive https://github.com/byt3bl33d3r/CrackMapExec $direc; fi
 
 echo "\nCloning Impacket \n"
 direc=/root/Documents/Impacket
@@ -37,6 +42,10 @@ echo "\nCloning Nullinux\n"
 direc=/root/Documents/Nullinux
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/m8r0wn/nullinux.git $direc; fi
 
+echo "\nDownloading latest Oracle Database Attack Tool\n"
+odat=`curl https://github.com/quentinhardy/odat/releases/latest -L --max-redirs 1 | grep -i "quentinhardy/odat/releases/download" | grep "x86_64" | cut -d '"' -f 2`
+wget http://github.com$odat -O ~/Downloads/odat.zip
+
 echo "\nCloning OSCPRepo \n"
 direc=/root/Documents/OSCPRepo
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/rewardone/OSCPRepo.git $direc; fi
@@ -44,6 +53,11 @@ if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.co
 echo "\nCloning Parameth\n"
 direc=/root/Documents/Parameth
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/maK-/parameth.git $direc; fi
+
+echo "\nCloning PEDA\n"
+direc=/root/Documents/Peda
+if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/longld/peda.git $direc; fi
+echo "source $direc/peda.py" >> ~/.gdbinit
 
 echo "\nCloning PowerCat\n"
 direc=/root/Documents/PowerCat
@@ -55,7 +69,7 @@ if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.co
 
 echo "\nCloning PowerSploit\n"
 direc=/root/Documents/PowerSploit
-if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/PowerShellMafia/PowerSploit.git $direc; fi
+if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/PowerShellMafia/PowerSploit.git -b dev $direc; fi
 
 echo "\nCloning Python PTY Shells\n"
 direc=/root/Documents/PythonPTYShells
@@ -98,47 +112,54 @@ if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.co
 
 
 #Local Enumerators. Can probably take out of OSCPRepo...
-mkdir /root/Documents/Local\ Info\ Enum 2>/dev/null
-mkdir /root/Documents/Local\ Info\ Enum/Linux 2>/dev/null
-mkdir /root/Documents/Local\ Info\ Enum/Windows 2>/dev/null
+direc="/root/Documents/Local Info Enum"
+mkdir $direc 2>/dev/null
+direc="/root/Documents/Local Info Enum/Linux"
+mkdir $direc 2>/dev/null
+direc="/root/Documents/Local Info Enum/Windows"
+mkdir $direc 2>/dev/null
 #ensure directories are created before pulling into them
 sleep 1
 
 echo "\nCloning LinEnum\n"
-direc=/root/Documents/Local\ Info\ Enum/Linux/RebootLinEnum
+direc="/root/Documents/Local Info Enum/Linux/RebootLinEnum"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/rebootuser/LinEnum.git $direc; fi
 
 echo "\nCopy Personal LinEnum\n"
-direc=/root/Documents/Local\ Info\ Enum/Linux/
-cp /root/Documents/OSCPRepo/Local\ Info\ Enum/LinEnum.sh $direc
+direc="/root/Documents/Local Info Enum/Linux/"
+cp "/root/Documents/OSCPRepo/Local Info Enum/LinEnum.sh" $direc
 
 echo "\nCloning HostRecon\n"
-direc=/root/Documents/Local\ Info\ Enum/Windows/HostRecon
+direc="/root/Documents/Local Info Enum/Windows/HostRecon"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/dafthack/HostRecon.git $direc; fi
 
 echo "\nCloning HostEnum\n"
-direc=/root/Documents/Local\ Info\ Enum/Windows/HostEnum
+direc="/root/Documents/Local Info Enum/Windows/HostEnum"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/threatexpress/red-team-scripts.git $direc; fi
 
 echo "\nCloning WindowsEnum\n"
-direc=/root/Documents/Local\ Info\ Enum/Windows/WindowsEnum
+direc="/root/Documents/Local Info Enum/Windows/WindowsEnum"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/azmatt/windowsEnum $direc; fi
 
 ##TODO copy seatbelt
 
 #Priv Esc Checkers. Can probably take out of OSCPRepo...
-mkdir /root/Documents/Priv\ Esc\ Checks 2>/dev/null
-mkdir /root/Documents/Priv\ Esc\ Checks/Linux 2>/dev/null
-mkdir /root/Documents/Priv\ Esc\ Checks/Windows 2>/dev/null
+direc="/root/Documents/Priv Esc Checks"
+mkdir $direc 2>/dev/null
+direc="/root/Documents/Priv Esc Checks/Linux"
+mkdir $direc 2>/dev/null
+direc="/root/Documents/Priv Esc Checks/Windows"
+mkdir $direc 2>/dev/null
 #ensure directories are created before pulling into them
 sleep 1
 
 echo "\nCloning Linux-Exploit-Suggester\n"
-direc=/root/Documents/Priv\ Esc\ Checks/Linux/linux-exploit-suggester
+direc="/root/Documents/Priv Esc Checks/Linux/linux-exploit-suggester"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/mzet-/linux-exploit-suggester.git $direc; fi
 
+
 echo "\nCloning Perl Linux-Exploit-Suggester\n"
-direc=/root/Documents/Priv\ Esc\ Checks/Linux/perl-linux-exploit-suggester
+direc="/root/Documents/Priv Esc Checks/Linux/perl-linux-exploit-suggester"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/jondonas/linux-exploit-suggester-2.git $direc; fi
 
 mkdir /root/Documents/Exploits 2>/dev/null
@@ -148,12 +169,24 @@ if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.co
 cp -r $direc/win-exp-suggester /root/Documents/Priv\ Esc\ Checks/Windows/
 
 echo "\nCloning Sherlock\n"
-direc=/root/Documents/Priv\ Esc\ Checks/Windows/Sherlock
+direc="/root/Documents/Priv Esc Checks/Windows/Sherlock"
 if [ -d "$direc" ]; then cd $direc && git pull; else git clone https://github.com/rasta-mouse/Sherlock.git $direc; fi
 
+
+
 echo "\n ### Processing actions...### \n\n"
+
+
+
 echo "\nSetup ADLDAP\n"
 cd /root/Documents/ADLdapEnum && pip install python-ldap && chmod +x ad-ldap-enum.py
+
+echo "\nSetup CrackMapExec\n"
+pip install --user pipenv
+cd /root/Documents/CrackMapExec && pipenv install
+pipenv shell
+python setup.py install
+exit
 
 echo "\nSetup Empire\n"
 #Empire calls ./setup from ./install, so needs to be in its directory
@@ -173,6 +206,11 @@ cd /root/Documents/LdapDD && chmod +x setup.py && chmod +x ldapdomaindump.py && 
 
 echo "\nSetup Nullinux\n"
 cp -p /root/Documents/Nullinux/nullinux.py /usr/local/bin
+
+echo "\nSetup ODAT\n"
+mkdir /root/Documents/ODAT
+unzip ~/Downloads/odat.zip -d /root/Documents/ODAT && rm ~/Downloads/odat.zip
+cd /root/Documents/ODAT && mv odat*/* .
 
 echo "\nSetup OSCPRepo \n"
 pip install colorama
